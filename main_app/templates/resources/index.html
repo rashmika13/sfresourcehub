@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>SF Resource Hub</title>
-</head>
-<body>
-  {% extends 'base.html' %} {% block content %}
-  <div class="container">
-    <h1>Resources</h1>
-    {% for resource in resources %}
+  <head>
+    <meta charset="utf-8" />
+    <title>SF Resource Hub</title>
+  </head>
+  <body>
+    {% extends 'base.html' %} {% block content %}
+    <div class="container">
+      <h1>Resources</h1>
+      {% for resource in resources %}
       <div class="card">
-        <!-- <a href="{% url 'detail' cloth.id %}"> -->
-        <div class="card-content">
-          <span class="card-title">{{ resource.org_name }}</span>
-          <p>Category: {{ resource.category }}</p>
-          <p>NGO: {{ resource.resource_name }}</p>
-          <p>Street: {{ resource.street}}</p>
-          <p>Notes: {{ resource.notes }}</p>
-        </div>
+          <div class="card-content">
+            <span class="card-title">{{ resource.org_name }}</span>
+            <p>Category: {{ resource.category }}</p>
+            <p>NGO: {{ resource.resource_name }}</p>
+            <p>Street: {{ resource.street}}</p>
+            <p>Notes: {{ resource.notes }}</p>
+          </div>
         </a>
       </div>
-    {% endfor %}
-  </div>
-  {% endblock %}
-</body>
+      {% endfor %}
+    </div>
+    {% endblock %}
+  </body>
 </html>
