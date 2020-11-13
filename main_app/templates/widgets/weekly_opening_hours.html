@@ -1,7 +1,7 @@
 <table>
 {% spaceless %}{% for widget in widget.subwidgets %}
   <tr><td>
-    <label id='{{widget.attrs.weekday_id}}' onclick="updateEnable('{{widget.attrs.weekday_id}}')" weekday='{{widget.attrs.weekday}}'>{{widget.attrs.weekday}}: {{widget.attrs.closed_text}}</label>
+    <label id='{{widget.attrs.weekday_id}}' onclick="updateWeeklyOpeningHoursEnable('{{widget.attrs.weekday_id}}')" weekday='{{widget.attrs.weekday}}'>{{widget.attrs.weekday}}: {{widget.attrs.closed_text}}</label>
     <label id='{{widget.attrs.hours_id}}' style='{{widget.attrs.style}}'>{% include widget.template_name %}</label>
   </td></tr>
 {% endfor %}{% endspaceless %}

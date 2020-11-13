@@ -1,7 +1,12 @@
+import re
+
 from .models import OpeningHours
 from .models import Resource
+from .models import DEFAULT_CLOSING_TIME
+from .models import DEFAULT_OPENING_TIME
 from .models import WEEKDAYS
 from .models import WeeklyOpeningHours
+from .models import parse_weekly_opening_hours
 from django import forms
 
 class USPhoneNumberMultiWidget(forms.MultiWidget):
@@ -10,16 +15,18 @@ class USPhoneNumberMultiWidget(forms.MultiWidget):
     """
     def __init__(self,attrs=None):
         self.template_name = 'widgets/phone_number.html'
-        widgets = (
+        widgets = [
             forms.TextInput(attrs={'size':'3','maxlength':'3', 'class':'phone', 'prefix':'+1 ( '}),
             forms.TextInput(attrs={'size':'3','maxlength':'3', 'class':'phone', 'prefix':') '}),
             forms.TextInput(attrs={'size':'4','maxlength':'4', 'class':'phone', 'prefix':' - '}),
-        )
+        ]
         super(USPhoneNumberMultiWidget, self).__init__(widgets, attrs)
 
     def decompress(self, value):
         if value:
-            return value.split('-')
+            matches = re.split("\+1 \(([0-9]+)\)-([0-9]+)-([0-9]+)", value)
+            if (matches and len(matches) == 5):
+            	return [matches[1], matches[2], matches[3]]
         return [None,None,None]
 
     def value_from_datadict(self, data, files, name):
@@ -38,39 +45,58 @@ class OpeningHoursMultiWidget(forms.MultiWidget):
         js = ('js/weekly_opening_hours.js',)
     def __init__(self, attrs=None):
         self.template_name = 'widgets/opening_hours.html'
-        widgets = (forms.CheckboxInput(attrs={'class': 'time_enabled', 'style': 'visibility: hidden'}),
-                   TimeWidget(attrs={'class': 'time', 'value': '09:00'}),
-                   TimeWidget(attrs={'class': 'time', 'value': '17:00', 'prefix': ' to '}))
+        widgets = [forms.CheckboxInput(attrs={'class': 'time_enabled', 'style': 'visibility: hidden'}),
+                   TimeWidget(attrs={'class': 'time', 'value': DEFAULT_OPENING_TIME}),
+                   TimeWidget(attrs={'class': 'time', 'value': DEFAULT_CLOSING_TIME, 'prefix': ' to '})]
         super(OpeningHoursMultiWidget, self).__init__(widgets, attrs)
     
     def decompress(self, value):
         if value:
-          return value.split('-')
+            return [value.enabled, value.opening_time, value.closing_time]
         return [None,None,None]
 
     def value_from_datadict(self, data, files, name):
         values = super(OpeningHoursMultiWidget, self).value_from_datadict(data, files, name)
         if values[0]:
-          return '%s %s'%(values[1], values[2])
+             return '%s %s'%(values[1], values[2])
         else:
           return None
+
+def get_widget_attributes(i):
+    return {'weekday': WEEKDAYS[i],
+            'closed_text': 'closed',                                                  
+            'weekday_id': 'opening_hours_weekday_%d'%(i),
+            'hours_id': 'opening_hours_times_%d'%(i),
+            'style': 'visibility: hidden'}
 
 class WeeklyOpeningHoursMultiWidget(forms.MultiWidget):
     def __init__(self, attrs=None):
         self.template_name = 'widgets/weekly_opening_hours.html'
-        widgets = (OpeningHoursMultiWidget(attrs={'weekday': 'Monday', 'closed_text': 'closed', 'weekday_id': 'opening_hours_weekday_0', 'hours_id': 'opening_hours_times_0', 'style': 'visibility: hidden'}),
-                   OpeningHoursMultiWidget(attrs={'weekday': 'Tuesday', 'closed_text': 'closed', 'weekday_id': 'opening_hours_weekday_1', 'hours_id': 'opening_hours_times_1', 'style': 'visibility: hidden'}),
-                   OpeningHoursMultiWidget(attrs={'weekday': 'Wednesday', 'closed_text': 'closed', 'weekday_id': 'opening_hours_weekday_2', 'hours_id': 'opening_hours_times_2', 'style': 'visibility: hidden'}),
-                   OpeningHoursMultiWidget(attrs={'weekday': 'Thursday', 'closed_text': 'closed', 'weekday_id': 'opening_hours_weekday_3', 'hours_id': 'opening_hours_times_3', 'style': 'visibility: hidden'}),
-                   OpeningHoursMultiWidget(attrs={'weekday': 'Friday', 'closed_text': 'closed', 'weekday_id': 'opening_hours_weekday_4', 'hours_id': 'opening_hours_times_4', 'style': 'visibility: hidden'}),
-                   OpeningHoursMultiWidget(attrs={'weekday': 'Saturday', 'closed_text': 'closed', 'weekday_id': 'opening_hours_weekday_5', 'hours_id': 'opening_hours_times_5', 'style': 'visibility: hidden'}),
-                   OpeningHoursMultiWidget(attrs={'weekday': 'Sunday', 'closed_text': 'closed', 'weekday_id': 'opening_hours_weekday_6', 'hours_id': 'opening_hours_times_6', 'style': 'visibility: hidden'}))
+        widgets = []
+        for i in range(len(WEEKDAYS)):
+            widgets.append(OpeningHoursMultiWidget(attrs=get_widget_attributes(i)))
         super(WeeklyOpeningHoursMultiWidget, self).__init__(widgets, attrs)
 
     def decompress(self, value):
         if value:
-            return value.split('-')
-        return [None,None,None,None,None,None,None]
+            if (isinstance(value, str)):
+                v = parse_weekly_opening_hours(value)
+            else:
+                v = value
+            values = []
+            widgets = []
+            for i in range(len(WEEKDAYS)):
+                opening_hours = v.opening_hours[WEEKDAYS[i]]
+                values.append(opening_hours)
+                attrs = get_widget_attributes(i)
+                if opening_hours.enabled:
+                    attrs['closed_text'] = ''
+                    attrs.pop('style', None)
+                widgets.append(OpeningHoursMultiWidget(attrs=attrs))
+
+            super(WeeklyOpeningHoursMultiWidget, self).__init__(widgets, None)
+            return values
+        return [None, None, None, None, None, None, None]
 
     def value_from_datadict(self, data, files, name):
         values = super(WeeklyOpeningHoursMultiWidget, self).value_from_datadict(data, files, name)
@@ -84,7 +110,43 @@ class ContactForm(forms.Form):
     subject = forms.CharField(required=True)
     message = forms.CharField(widget=forms.Textarea, required=True)
 
-class AddResourceForm(forms.Form):
+class AddResourceForm(forms.ModelForm):
+    class Meta:
+        model = Resource
+        fields = ('resource_name',
+                  'org_name',
+                  'category',
+                  'opening_hours',
+                  'phone',
+                  'address',
+                  'street_number',
+                  'street_name',
+                  'city',
+                  'state',
+                  'country',
+                  'postal_code',
+                  'long',
+                  'lat',
+                  'url',
+                  'notes')
+        widgets = {
+            'resource_name': forms.TextInput(),
+            'org_name': forms.TextInput(),
+            'category': forms.Select(),
+            'opening_hours': WeeklyOpeningHoursMultiWidget(),
+            'phone': USPhoneNumberMultiWidget(),
+            'address': forms.TextInput(),
+            'street_number': forms.HiddenInput(),
+            'street_name': forms.HiddenInput(),
+            'city': forms.HiddenInput(),
+            'state': forms.HiddenInput(),
+            'country': forms.HiddenInput(),
+            'postal_code': forms.HiddenInput(),
+            'long': forms.HiddenInput(),
+            'lat': forms.HiddenInput(),
+            'url': forms.TextInput(),
+            'notes': forms.TextInput()
+        }
     resource_name = forms.CharField(max_length=100, required=True)
     org_name = forms.CharField(max_length=100, required=True)
     category = forms.ChoiceField(choices=Resource.CATEGORIES)

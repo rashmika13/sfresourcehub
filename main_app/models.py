@@ -7,7 +7,8 @@ from django.urls import reverse
 
 WEEKDAYS = ["monday", "tuesday", "wednesday",
             "thursday", "friday", "saturday", "sunday"]
-
+DEFAULT_OPENING_TIME = '09:00'
+DEFAULT_CLOSING_TIME = '17:00'
 
 class OpeningHours(object):
     def __init__(self, enabled, opening_time, closing_time):
@@ -27,12 +28,12 @@ def parse_weekly_opening_hours(value):
     opening_hours = []
     for weekday in WEEKDAYS:
         match = re.search(
-            '\(%s ([0-9][0-9]:[0-9][0-9]) ([0-9][0-9]:[0-9][0-9])\)' % weekday, value)
+            '%s ([0-9][0-9]:[0-9][0-9]) ([0-9][0-9]:[0-9][0-9])' % weekday, value)
         if match:
             opening_hours.append(OpeningHours(
                 True, match.group(1), match.group(2)))
         else:
-            opening_hours.append(OpeningHours(False, '00:00', '00:00'))
+            opening_hours.append(OpeningHours(False, DEFAULT_OPENING_TIME, DEFAULT_CLOSING_TIME))
     return WeeklyOpeningHours(opening_hours)
 
 
@@ -65,7 +66,8 @@ class WeeklyOpeningHoursField(models.Field):
         opening_hours_str_list = []
         for weekday in WEEKDAYS:
             if value.opening_hours[weekday].enabled:
-                opening_hours_str_list.append('%s %s %s' % (value.opening_hours[weekday].opening_time,
+                opening_hours_str_list.append('%s %s %s' % (weekday,
+                                                            value.opening_hours[weekday].opening_time,
                                                             value.opening_hours[weekday].closing_time))
         return ''.join(opening_hours_str_list)
 
@@ -131,8 +133,8 @@ class Resource(models.Model):
     state = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
     postal_code = models.CharField(max_length=10, blank=True)
-    long = models.DecimalField(max_digits=12, decimal_places=6)
-    lat = models.DecimalField(max_digits=12, decimal_places=6)
+    long = models.DecimalField(max_digits=64, decimal_places=32)
+    lat = models.DecimalField(max_digits=64, decimal_places=32)
     phone = models.CharField(max_length=20)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     url = models.CharField(max_length=200, blank=True)

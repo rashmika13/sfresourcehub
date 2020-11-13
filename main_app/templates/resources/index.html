@@ -80,28 +80,26 @@
   </head>
   <body>
     <h1>Resources</h1>
-    {% for resource in resources %} {% if request.user %}
-    <a href="{% url 'detail' resource.id %}">
-      {% endif %}
-      <div
-        class="card text-center shadow-lg p-3 mb-5 bg-white rounded"
-        id="card"
-        style="width: 18rem"
-      >
-        <div class="card-content">
-          <h5 class="card-title">{{ resource.org_name }}</h5>
-          <br />
-          <p>Resource: {{ resource.resource_name }}</p>
-          <p>Category: {{ resource.category }}</p>
-        </div>
-      </div>
-    </a>
-    {% endfor %}
-    <br />
     <div id="map"></div>
-    <div>
-      <table id="resources"></table>
-    </div>
+    <br>
+    {% for resource in resources %}
+        {% if request.user %}
+            <a href="{% url 'detail' resource.id %}">
+        {% endif %}
+        <div
+         class="card text-center shadow-lg p-3 mb-5 bg-white rounded"
+         id="card"
+         style="width: 18rem"
+        >
+            <div class="card-content">
+                <h5 class="card-title">{{ resource.org_name }}</h5>
+                <br/>
+                <p>Resource: {{ resource.resource_name }}</p>
+                <p>Category: {{ resource.category }}</p>
+            </div>
+        </div>
+        </a>
+    {% endfor %}
     {% endblock %}
   </body>
 </html>

@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block content %}
+Success! Thank you for your message.
+<br>
+<br>
+<table class='text-secondary'>
+<tr><th>Sender:</th><td>{{sender}}</td></tr>
+<tr><th>Subject:</th><td>{{subject}}</td></tr>
+<tr><th>Message:</th><td>{{message}}</td></tr>
+</table>
+{% endblock %}

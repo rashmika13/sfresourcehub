@@ -1,6 +1,6 @@
 "use strict";
 
-const sfLatLng = { lat: 37.7749, lng: -122.4194 };
+const tenderloinLatLng = { lat: 37.7847, lng: -122.4145 };
 
 const categories = [
   "FOOD",
@@ -28,8 +28,8 @@ const category_names = [
 
 function initMap() {
   var map = new google.maps.Map(document.getElementById("map"), {
-    center: sfLatLng,
-    zoom: 13,
+    center: tenderloinLatLng,
+    zoom: 16,
   });
 
   var tableRef = document.getElementById("resources");
@@ -70,11 +70,6 @@ function initMap() {
         };
       })(marker, contentString, infoWindow)
     );
-
-    // Insert a row in the table at the last row
-    var newRow = tableRef.insertRow();
-    var newCell = newRow.insertCell(0);
-    newCell.innerHTML = contentString;
   }
 
   var infoWindow = new google.maps.InfoWindow({

@@ -1,4 +1,3 @@
-
 from .forms import ContactForm  # Add this
 from .forms import AddResourceForm  # Add this
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -29,10 +28,8 @@ def resources_index(request):
 def resourceView(request):
     error_message = ''
     if request.method == 'POST':
-        print('resourceView: POST')
         form = AddResourceForm(request.POST)
         if form.is_valid():
-            print('form.is_valid')
             r = Resource(resource_name=form.cleaned_data['resource_name'],
                          org_name=form.cleaned_data['org_name'],
                          category=form.cleaned_data['category'],
@@ -56,10 +53,10 @@ def resourceView(request):
             print('!form.is_valid')
             print(form.errors)
             error_message = form.errors
+    print("resourceView: requesting!")
     form = AddResourceForm()
     context = {'form': form}
     return render(request, 'resources/create.html', context)
-
 
 def signup(request):
     error_message = ''
@@ -82,22 +79,25 @@ def contactView(request):
     else:
         form = ContactForm(request.POST)
         if form.is_valid():
-            subject = form.cleaned_data['subject']
+            subject = 'Resource HUB: ' + form.cleaned_data['subject']
             sender = form.cleaned_data['from_email']
-            message = form.cleaned_data['message']
+            message = '''
+Sender: %s
+Message: %s
+            '''%(sender, form.cleaned_data['message'])
             recipent = ['sfresourcehub@gmail.com']
             try:
                 send_mail(subject, message, sender,
                           recipent, fail_silently=True)
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
-            return HttpResponse('Success! Thank you for your message.')
+            return render(request, "email_success.html", {'subject': form.cleaned_data['subject'],
+                                                          'message': form.cleaned_data['message'],
+                                                          'sender': sender})
     return render(request, "email.html", {'form': form})
-
 
 def successView(request):
     return HttpResponse('Success! Thank you for your message.')
-
 
 # def contact(request):
 #     if request.method == "POST":
@@ -125,12 +125,10 @@ def resources_detail(request, resource_id):
             'resource': resource
         })
 
-
 class ResourceUpdate(LoginRequiredMixin, UpdateView):
+    template_name = 'resources/update.html'
     model = Resource
-    fields = ['resource_name', 'org_name', 'category', 'opening_hours',
-              'address', 'phone', 'url']
-
+    form_class = AddResourceForm
 
 class ResourceDelete(LoginRequiredMixin, DeleteView):
     model = Resource
