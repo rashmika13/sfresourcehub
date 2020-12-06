@@ -1,11 +1,11 @@
 :root {
-  --main-text-color: #282828;
-  --resource-text-color: #3399ff;
-  --faint-text-color: #505050;
+  --main-text-color: #6E645C;
+  --resource-text-color: #00AECB;
+  --faint-text-color: #6EB2BD;
 }
 
 #map {
-  height: 100%;
+  height: 90vh;
 }
 
 html,
@@ -22,9 +22,14 @@ body {
   width: 100%;
 }
 
-.resource_org_name {
+.resource_name {
   color: var(--main-text-color);
   font-size: large;
+}
+
+.resource_org_name {
+  color: var(--faint-text-color);
+  font-size: x-small;
 }
 
 .resource_street {
@@ -33,11 +38,6 @@ body {
 }
 
 .resource_notes {
-  color: var(--main-text-color);
+  color: var(--faint-text-color);
   font-size: x-small;
-}
-
-td.resource {
-  padding: 8px;
-  background: -webkit-radial-gradient(circle, #f5f5dc, #ffffff);
 }

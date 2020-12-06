@@ -6,21 +6,40 @@
   </head>
   <body>
     {% extends 'base.html' %} {% block content %}
-    <div class="container text-center">
-      <img
-        src="/static/images/busy-street.png"
-        class="mt-2 mb-3 img-fluid"
-        alt="golden gate bridge"
-      />
-      <div class="user-login">
-        <h1>Login</h1>
+      <div class="m-4"> 
         <form method="post" action="{% url 'login' %}">
-          {% csrf_token %} {{ form.as_p }}
-          <input type="submit" class="btn btn-info my-2" value="Login" />
-          <input type="hidden" name="next" value="{{ next }}" />
+          {% csrf_token %} 
+
+          {{ form.non_field_errors }}
+
+          <div class="row m-2">
+            {{ form.username.errors }}
+            <div class="col-4">
+              <label for="{{ form.username.id_for_label }}" class="form-label">Username:</label>
+            </div>
+            <div class="col-8">
+              {{ form.username }}
+            </div>
+          </div>
+
+          <div class="row m-2">
+            {{ form.password.errors }}
+            <div class="col-4">
+              <label for="{{ form.password.id_for_label }}" class="form-label">Password:</label>
+            </div>
+            <div class="col-8">
+              {{ form.password }}
+            </div>
+          </div>
+
+          <div class="row m-2"> 
+            <div class="shadow" style="width:fit-content;">
+              <input type="submit" class="btn btn-default darken-on-hover" value="Log In" />
+              <input type="hidden" name="next" value="{{ next }}" />
+            </div>
+          </div>
         </form>
       </div>
-    </div>
     {% endblock %}
   </body>
 </html>

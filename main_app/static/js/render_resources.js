@@ -44,7 +44,8 @@ function initMap() {
       category_index == -1 ? "------" : `--- ${resource.category} ---`;
 
     var contentString = `<div class='resource_category'>${category}</div>
-        <div class='resource_org_name'>${resource.org_name}</div>
+        <div class='resource_name'>${resource.resource}</div>
+        <div class='resource_org_name'>offered by ${resource.org_name}</div>
         <div class='resource_street'>${resource.address}</div>
         <div class='resource_street'>${resource.hrs}</div>
         <div class='resource_street'>${resource.phone}</div>

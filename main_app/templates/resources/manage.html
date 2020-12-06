@@ -1,0 +1,147 @@
+{% extends 'base.html' %} {% block content %} {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>SF Resource Hub</title>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/markers.css' %}"
+    />
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script>
+      opening_hours_map = {};
+
+      {% for resource in resources %}
+        // if (passlist_categories.length < 1 || passlist_categories.includes("{{resource.category}}")) {
+          opening_hours = "<ul>"
+            {% for key, value in resource.opening_hours.opening_hours.items %}
+             if ("{{value.enabled}}" == "True") {
+               opening_hours += "<li>{{key}}: {{value.opening_time}} - {{value.closing_time}}</li>"
+             }
+            {% endfor %}
+          opening_hours += "\n</ul>"
+
+          opening_hours_map[{{resource.id}}] = opening_hours;
+        // }
+      {% endfor %}
+
+      function set_opening_hours() {
+        for (id in opening_hours_map) {
+          var tableRef = document.getElementById("opening_hours" + id);
+          tableRef.innerHTML = opening_hours_map[id];
+        }
+      }
+
+      function expand_id() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const id = urlParams.get('id')
+        if (id == null) {
+          return;
+        }
+        var toggle = document.getElementById('expandable' + id);
+        if (toggle == null) {
+          return;
+        }
+        var card = document.getElementById('card' + id);
+        if (card == null) {
+          return;
+        }
+        toggle.setAttribute('aria-expanded', true);
+        toggle.setAttribute('class', '');
+        card.setAttribute('class', card.getAttribute('class') + 'show');
+        console.log(el)
+      }
+
+      function run_on_load() {
+        set_opening_hours();
+        expand_id();
+      }
+    </script>
+  </head>
+  <body onload="run_on_load()">
+    <div class="row m-1 align-items-center">
+      <h1 class="m-2" id="page_title">Manage My Resources</h1>
+    </div>
+
+    <div class="row m-5 shadow-sm" style="display:inline-block;">
+      <a class="btn btn-default bold darken-on-hover"
+       href="{% url 'resources_create' %}"
+       role="button">Add Resource</a>
+    </div>
+
+    <div class="row m-5 shadow">
+      <div class="row m-3" style="color:#00AECB; font-size:x-large;">My Resources</div>
+      <div class="row m-3" id="resource_listings">
+        {% for resource in resources %}
+          <div class="row m-1 shadow-sm" style="width:100%;">
+            <a data-toggle="collapse" id="expandable{{resource.id}}" 
+             href="#card{{resource.id}}" role="button" aria-expanded="false" aria-controls="card{{resource.id}}"
+             style="width:100%;" class="collapsed">
+              <div class="row" style="width:10">
+                <div class="col m-2 col-3">{{resource.resource_name}}</div>
+                <div class="col m-2 col-3">{{resource.category}}</div>
+                <div class="col m-2 col-4">{{resource.street_number}} {{resource.street_name}}</div>
+                <div class="col m-2 col-1 text-right manage-plus">
+<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-expand" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M3.646 9.146a.5.5 0 0 1 .708 0L8 12.793l3.646-3.647a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708zm0-2.292a.5.5 0 0 0 .708 0L8 3.207l3.646 3.647a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 0 .708z"/>
+</svg>
+                </div>
+                <div class="col col-1 m-2 text-right manage-minus">
+<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chevron-contract" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M3.646 13.854a.5.5 0 0 0 .708 0L8 10.207l3.646 3.647a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 0 .708zm0-11.708a.5.5 0 0 1 .708 0L8 5.793l3.646-3.647a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708z"/>
+</svg>
+                </div>
+              </div>
+            </a>
+            <div class="collapse" id="card{{resource.id}}" style="width:100%;">
+              <div class="row m-2 border">
+                <div class="col m-2">
+                  <div class='row m-1 resource_name'>{{resource.resource_name}}</div>
+                  <div class='row m-1 resource_notes'>offered by &nbsp;<div class="bold" style="display:inline;">{{resource.org_name}}</div></div>
+                  <br>
+                  <div class='row m-1 resource_street'>opening hours:<div id='opening_hours{{resource.id}}'></div></div>
+                  <div class='row m-1 resource_street'>
+                    <a href='https://maps.google.com/?q={{resource.lat}},{{resource.long}}' style="text-decoration:none;">
+                      {{resource.address}}
+                    </a>
+                  </div>
+                  <div class='row m-1 resource_street'>{{resource.phone}}</div>
+                  <div class='row m-1 resource_street'>
+                    <a href='${resource.url}' style="text-decoration:none;">
+                      {{resource.url}}
+                    </a>
+                  </div>
+                  <br>
+                  <div class='row m-1 resource_street' style='height:auto;'>{{resource.notes}}</div>
+                </div>
+                <div class="col m-2" id="buttons{{resource.id}}">
+                  <!-- todo: render delete confirmation on the manage page --> 
+                  <div class="row m-2 shadow-sm float-right">
+                    <a class="btn btn-delete bold darken-on-hover"
+                     href="{% url 'resources_delete' resource.id %}"
+                     role="button">Delete</a>
+                  </div>
+                  <div class="row m-2 shadow-sm float-right">
+                    <a class="btn btn-edit bold darken-on-hover"
+                    href="{% url 'resources_update' resource.id %}"
+                    role="button">Edit</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
+{% endblock %}

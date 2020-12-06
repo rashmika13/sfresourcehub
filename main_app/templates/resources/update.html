@@ -17,70 +17,151 @@
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfXa-qMJ4xi6DKVaa_N_xsPSXWq2YKEyA&callback=initAutocomplete&libraries=places&v=weekly"
       defer
     ></script>
-    <script>
-        "use strict";
+    <script src="{% static 'js/address.js' %}"></script>
 
-        let placeSearch;
-        let autocomplete;
+    <script type="text/javascript">
+      let reTime = new RegExp('([0-9]+):([0-9]+) (am|pm)');
 
-        function initAutocomplete() {
-        // Create the autocomplete object, restricting the search predictions to
-        // geographical location types.
-        autocomplete = new google.maps.places.Autocomplete(
-          document.getElementById("id_address"),
-          {
-            types: ["geocode"]
-          }
-        );
-          // Avoid paying for data that you don't need by restricting the set of
-          // place fields that are returned to just the address components.
-          autocomplete.setFields(["geometry", "address_component"]);
-          autocomplete.addListener("place_changed", fillInAddress);
+      function convert_to_twentyfour_hour(value) {
+        matches = reTime.exec(value)
+        if (!matches || matches.length != 4) {
+          return value
         }
-
-        const componentForm = {
-          street_number: "short_name",
-          route: "long_name",
-          locality: "long_name",
-          administrative_area_level_1: "short_name",
-          country: "long_name",
-          postal_code: "short_name"
-        };
-
-        const addressForm = {
-          street_number: "id_street_number",
-          route: "id_street_name",
-          locality: "id_city",
-          administrative_area_level_1: "id_state",
-          country: "id_country",
-          postal_code: "id_postal_code"
-        };
-
-        function fillInAddress() {
-          const place = autocomplete.getPlace();
-          document.getElementById('id_lat').value = place.geometry.location.lat();
-          document.getElementById('id_long').value = place.geometry.location.lng();
-          for (const component of place.address_components) {
-            const addressType = component.types[0];
-
-            if (componentForm[addressType]) {
-              const val = component[componentForm[addressType]];
-              document.getElementById(addressForm[addressType]).value = val;
-            }
-          }
+        hr = parseInt(matches[1])
+        if (hr === 12 && matches[3] === 'am') {
+          return '00:' + matches[2];
+        } else if (matches[3] == 'am') {
+          return (hr < 10 ? '0' : '') + hr + ':' + matches[2];
         }
+        return hr + 12 + ':' + matches[2];
+      }
+
+      function convert_times() {
+        var times = document.getElementsByClassName("time");
+        for (var i = 0; i < times.length; i++) {
+          times[i].value = convert_to_twentyfour_hour(times[i].defaultValue);
+        }
+      }
     </script>
 </head>
 
-<h1>Edit Resource</h1>
+<body onload='convert_times()'>
+<div class="row m-1 align-items-center" style="">
+  <h1 class="m-2" id="page_title">Edit Resource</h1>
+</div>
+
+<div class="m-4">
 <form method="post" nonvalidate>
   {% csrf_token %}
-  <table>
-  {{ form.as_table }}
-  </table>
+
+  {{ form.non_field_errors }}
+
+  <div class="row m-2">
+    {{ form.resource_name.errors }}
+    <div class="col-4">
+      <label for="{{ form.resource_name.id_for_label }}" class="form-label">Resource:</label>
+    </div>
+    <div class="col-8">
+      {{ form.resource_name }}
+    </div>
+  </div>
+
+  <div class="row m-2">
+    {{ form.org_name.errors }}
+    <div class="col-4">
+      <label for="{{ form.org_name.id_for_label }}" class="form-label">Organization:</label>
+    </div>
+    <div class="col-8">
+      {{ form.org_name }}
+    </div>
+  </div>
+
+  <div class="row m-2">
+    {{ form.category.errors }}
+    <div class="col-4">
+      <label for="{{ form.category.id_for_label }}" class="form-label">Category:</label>
+    </div>
+    <div class="col-8">
+      {{ form.category }}
+    </div>
+  </div>
+
+  <div class="row m-2">
+    {{ form.opening_hours.errors }}
+    <div class="col-4">
+      <label for="{{ form.opening_hours.id_for_label }}" class="form-label">Opening Hours:</label>
+    </div>
+    <div class="col-8">
+      {{ form.opening_hours }}
+    </div>
+  </div>
+
+  <div class="row m-2">
+    {{ form.phone.errors }}
+    <div class="col-4">
+      <label for="{{ form.phone.id_for_label }}" class="form-label">Phone Number:</label>
+    </div>
+    <div class="col-8">
+      {{ form.phone }}
+    </div>
+  </div>
+
+  <div class="row m-2">
+    {{ form.address.errors }}
+    <div class="col-4">
+      <label for="{{ form.address.id_for_label }}" class="form-label">Address:</label>
+    </div>
+    <div class="col-8">
+      {{ form.address }}
+    </div>
+  </div>
+
+  <!-- Hidden fields for address details -->
+  <div style="visibility:hidden;">
+    {{ form.street_number.errors }}
+    {{ form.street_number }}
+    {{ form.street_name.errors }}
+    {{ form.street_name }}
+    {{ form.city.errors }}
+    {{ form.city }}
+    {{ form.state.errors }}
+    {{ form.state }}
+    {{ form.country.errors }}
+    {{ form.country }}
+    {{ form.postal_code.errors }}
+    {{ form.postal_code }}
+    {{ form.lat.errors }}
+    {{ form.lat }}
+    {{ form.long.errors }}
+    {{ form.long }}
+  </div>
+
+  <div class="row m-2">
+    {{ form.url.errors }}
+    <div class="col-4">
+      <label for="{{ form.url.id_for_label }}" class="form-label">Url:</label>
+    </div>
+    <div class="col-8">
+      {{ form.url }}
+    </div>
+  </div>
+
+  <div class="row m-2">
+    {{ form.notes.errors }}
+    <div class="col-4">
+      <label for="{{ form.notes.id_for_label }}" class="form-label">Notes:</label>
+    </div>
+    <div class="col-8">
+      {{ form.notes }}
+    </div>
+  </div>
+
   <div class="form-actions">
-    <button type="submit">Send</button>
+    <div class="shadow" style="width:fit-content;">
+      <button class="btn bold darken-on-hover btn-default" type="submit">Update</button>
+    </div>
   </div>
 </form>
-
+</div>
+</body>
 {% endblock %}

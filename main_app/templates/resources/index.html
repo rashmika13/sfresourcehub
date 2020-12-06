@@ -8,13 +8,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'css/styles.css' %}"
-    />
     <title>SF Resource Hub</title>
+
     <link
       rel="stylesheet"
       type="text/css"
@@ -27,12 +22,11 @@
     />
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDtnS3D3bvBjvrLTLJJOv8xftB5Ctdgeck&callback=initMap&libraries=drawing&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfXa-qMJ4xi6DKVaa_N_xsPSXWq2YKEyA&map_ids=cce853939880394f&callback=initMap&libraries=drawing&v=weekly"
       defer
     ></script>
+    <script src="{% static 'js/resources.js' %}"></script>
     <script>
-
-
         const icons = [
         "{% static 'images/icons/food.gif' %}",
         "{% static 'images/icons/clothing.gif' %}",
@@ -45,61 +39,52 @@
         "{% static 'images/icons/medical_assistance.gif' %}"
       ];
 
-       const default_icon = "{% static 'images/icons/default.gif' %}"
+      const default_icon = "{% static 'images/icons/default.gif' %}"
 
-        resources_from_database = []
+      resources_from_database = []
+
+      var {title, passlist_categories} = getTitleAndPasslistFromUrlParams();
 
       {% for resource in resources %}
-        opening_hours = "<ul>"
-          {% for key, value in resource.opening_hours.opening_hours.items %}
-           if ("{{value.enabled}}" == "True") {
-             opening_hours += "<li>{{key}}: {{value.opening_time}} - {{value.closing_time}}</li>"
-           } else {
-             opening_hours += "<li>{{key}}: closed</li>"
-           }
-          {% endfor %}
-        opening_hours += "\n<ul>"
+        if (passlist_categories.length < 1 || passlist_categories.includes("{{resource.category}}")) {
+          opening_hours = "<ul>"
+            {% for key, value in resource.opening_hours.opening_hours.items %}
+             if ("{{value.enabled}}" == "True") {
+               opening_hours += "<li>{{key}}: {{value.opening_time}} - {{value.closing_time}}</li>"
+             }
+            {% endfor %}
+          opening_hours += "\n<ul>"
 
-        r = {
-          resource_name: "{{resource.resource_name}}",
-          org_name: "{{resource.org_name}}",
-          category: "{{resource.category}}",
-          hrs: opening_hours,
-          link: "{{resource.url}}",
-          notes: "{{resource.notes}}",
-          address: "{{resource.address}}",
-          lat: "{{resource.lat}}",
-          long: "{{resource.long}}",
-          phone: "{{resource.phone}}",
+          r = {
+            resource_name: "{{resource.resource_name}}",
+            org_name: "{{resource.org_name}}",
+            category: "{{resource.category}}",
+            hrs: opening_hours,
+            link: "{{resource.url}}",
+            notes: "{{resource.notes}}",
+            address: "{{resource.street_number}} {{resource.street_name}}, {{resource.city}}",
+            lat: "{{resource.lat}}",
+            long: "{{resource.long}}",
+            phone: "{{resource.phone}}",
+            id: "{{resource.id}}"
+          }
+          resources_from_database.push(r)
         }
-        resources_from_database.push(r)
       {% endfor %}
+
+      window.addEventListener("DOMContentLoaded", function() {
+        var page_title = document.getElementById("page_title");
+        page_title.innerHTML = title;
+      }, false);
     </script>
-    <script src="{% static 'js/resources.js' %}"></script>
     <script src="{% static 'js/markers.js' %}"></script>
   </head>
   <body>
-    <h1>Resources</h1>
-    <div id="map"></div>
-    <br>
-    {% for resource in resources %}
-        {% if request.user %}
-            <a href="{% url 'detail' resource.id %}">
-        {% endif %}
-        <div
-         class="card text-center shadow-lg p-3 mb-5 bg-white rounded"
-         id="card"
-         style="width: 18rem"
-        >
-            <div class="card-content">
-                <h5 class="card-title">{{ resource.org_name }}</h5>
-                <br/>
-                <p>Resource: {{ resource.resource_name }}</p>
-                <p>Category: {{ resource.category }}</p>
-            </div>
-        </div>
-        </a>
-    {% endfor %}
-    {% endblock %}
+    <div class="row m-1 align-items-center" style="">
+      <h1 class="m-2" id="page_title">All Resources</h1>
+    </div>
+    <div class="row m-1 shadow-sm" id="map"></div>
+    <div class="row m-1" style="width:100%;" id="resource_listings">
   </body>
 </html>
+{% endblock %}

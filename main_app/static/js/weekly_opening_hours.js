@@ -1,7 +1,4 @@
 function updateWeeklyOpeningHoursEnable(id) {
-    console.log('updateEnable: ')
-    console.log(id)
-
     weekday = document.getElementById(id)
 
     i = id.slice(-1)

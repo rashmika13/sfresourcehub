@@ -5,8 +5,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 
-WEEKDAYS = ["monday", "tuesday", "wednesday",
-            "thursday", "friday", "saturday", "sunday"]
+WEEKDAYS = ["Monday", "Tuesday", "Wednesday",
+            "Thursday", "Friday", "Saturday", "Sunday"]
 DEFAULT_OPENING_TIME = '09:00'
 DEFAULT_CLOSING_TIME = '17:00'
 
@@ -23,19 +23,35 @@ class WeeklyOpeningHours(object):
         for i in range(len(WEEKDAYS)):
             self.opening_hours[WEEKDAYS[i]] = opening_hours_array[i]
 
+def convert_to_am_pm(value):
+    values = value.split(':')
+    hr = int(values[0]);
+
+    tag = 'am' if hr < 12 else 'pm';
+    hr = 12 if hr == 0 else (hr - 12 if hr > 12 else hr);
+  
+    return str(hr) + ':' + values[1] + ' ' + tag;
+
+def convert_to_24_hour(value):
+    match = re.search('([0-9]+):([0-9]+) (am|pm)', value)
+    if match:
+        hr = int(match.group(1))
+        hr = 0 if (hr == 12 and match.group(3) == 'am') else (hr + 12 if match.group(3) == 'pm' else hr);
+        return '%02d:%s'%(hr, match.group(2));
+    else:
+        return value
 
 def parse_weekly_opening_hours(value):
     opening_hours = []
     for weekday in WEEKDAYS:
         match = re.search(
-            '%s ([0-9][0-9]:[0-9][0-9]) ([0-9][0-9]:[0-9][0-9])' % weekday, value)
+            '%s ([0-9][0-9]:[0-9][0-9]) ([0-9][0-9]:[0-9][0-9])' % weekday, value, flags=re.IGNORECASE)
         if match:
             opening_hours.append(OpeningHours(
-                True, match.group(1), match.group(2)))
+                True, convert_to_am_pm(match.group(1)), convert_to_am_pm(match.group(2))))
         else:
             opening_hours.append(OpeningHours(False, DEFAULT_OPENING_TIME, DEFAULT_CLOSING_TIME))
     return WeeklyOpeningHours(opening_hours)
-
 
 class WeeklyOpeningHoursField(models.Field):
     def __init__(self, *args, **kwargs):
@@ -66,9 +82,9 @@ class WeeklyOpeningHoursField(models.Field):
         opening_hours_str_list = []
         for weekday in WEEKDAYS:
             if value.opening_hours[weekday].enabled:
-                opening_hours_str_list.append('%s %s %s' % (weekday,
-                                                            value.opening_hours[weekday].opening_time,
-                                                            value.opening_hours[weekday].closing_time))
+                opening_hours_str_list.append('(%s %s %s)' % (weekday,
+                                                              convert_to_24_hour(value.opening_hours[weekday].opening_time),
+                                                              convert_to_24_hour(value.opening_hours[weekday].closing_time)))
         return ''.join(opening_hours_str_list)
 
     def get_db_prep_value(self, value, connection, prepared=False):

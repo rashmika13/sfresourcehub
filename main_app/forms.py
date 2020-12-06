@@ -147,11 +147,11 @@ class AddResourceForm(forms.ModelForm):
             'url': forms.TextInput(),
             'notes': forms.TextInput()
         }
-    resource_name = forms.CharField(max_length=100, required=True)
-    org_name = forms.CharField(max_length=100, required=True)
+    resource_name = forms.CharField(max_length=100, required=True, label='Resource')
+    org_name = forms.CharField(max_length=100, required=True, label='Organization')
     category = forms.ChoiceField(choices=Resource.CATEGORIES)
     opening_hours = forms.CharField(max_length=512, widget=WeeklyOpeningHoursMultiWidget(), required=False)
-    phone = forms.CharField(widget=USPhoneNumberMultiWidget())
+    phone = forms.CharField(widget=USPhoneNumberMultiWidget(), label='Phone number')
   
     address = forms.CharField(max_length=100, required=True)
     street_number = forms.CharField(widget=forms.HiddenInput(),

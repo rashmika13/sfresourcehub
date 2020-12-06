@@ -2,28 +2,30 @@ from .forms import ContactForm  # Add this
 from .forms import AddResourceForm  # Add this
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Resource
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
 
 def home(request):
     return render(request, 'home.html')
 
-
 def about(request):
     return render(request, 'about.html')
-
 
 def resources_index(request):
     resources = Resource.objects.all()
     return render(request, 'resources/index.html', {'resources': resources})
 
+def manage_resources(request):
+    resources = Resource.objects.all()
+    return render(request, 'resources/manage.html', {'resources': resources})
 
 def resourceView(request):
     error_message = ''
@@ -48,7 +50,7 @@ def resourceView(request):
                          url=form.cleaned_data['url'],
                          notes=form.cleaned_data['notes'])
             r.save()
-            return redirect('index')
+            return redirect('resources_manage')
         else:
             print('!form.is_valid')
             print(form.errors)
@@ -57,6 +59,17 @@ def resourceView(request):
     form = AddResourceForm()
     context = {'form': form}
     return render(request, 'resources/create.html', context)
+
+def login_request(request):
+    form = AuthenticationForm()
+    return render(request = request,
+                  template_name = "registration/login.html",
+                  context={"form":form})
+
+def logout_request(request):
+    logout(request)
+    messages.info(request, "Logged out successfully!")
+    return redirect("/")
 
 def signup(request):
     error_message = ''
@@ -71,7 +84,6 @@ def signup(request):
     form = UserCreationForm()
     context = {'form': form, 'error_message': error_message}
     return render(request, 'registration/signup.html', context)
-
 
 def contactView(request):
     if request.method == 'GET':
@@ -130,10 +142,13 @@ class ResourceUpdate(LoginRequiredMixin, UpdateView):
     model = Resource
     form_class = AddResourceForm
 
+    def get_success_url(self):
+      pk = self.kwargs["pk"];
+      return '/manage_resources?id=%d#card%d'%(pk, pk);
+
 class ResourceDelete(LoginRequiredMixin, DeleteView):
     model = Resource
-    success_url = '/resources/'
-
+    success_url = '/manage_resources'
 
 @login_required
 def myresources(request):
@@ -141,7 +156,6 @@ def myresources(request):
     return render(request, 'resources/myindex.html', {
         'myresources': myresources,
     })
-
 
 def resources_categories(request):
     return render(request, 'categories.html')

@@ -4,9 +4,9 @@
     <meta charset="utf-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=false;"
     />
-    <title>St.Anthony's</title>
+    <title>St.Anthony's Resource Hub</title>
     {% load static %}
     <!-- Bootstrap CSS -->
     <link
@@ -15,79 +15,70 @@
       integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link
       rel="stylesheet"
-      type="text/html"
       href="{% static 'css/style.css' %}"
     />
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </head>
   <body>
     <div class="container-fluid">
       <nav
-        class="navbar navbar-expand-lg navbar-light ml-auto"
-        style="background-color: #1ce;"
-      >
+        class="navbar navbar-expand-lg navbar-light ml-auto shadow"
+        style="background-color:#FFFFFF">
         <button
-          class="navbar-toggler"
+          class="navbar-toggler collapsed"
           type="button"
           data-toggle="collapse"
-          data-target="#navbarTogglerDemo01"
-          aria-controls="navbarTogglerDemo01"
+          data-target="#navbarToggler"
+          aria-controls="navbarToggler"
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-          <a class="navbar-brand" style="font-family: sentinel;" href="/">St. Anthony's</a>
-          <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <div class="collapse navbar-collapse" id="navbarToggler">
+          <a class="navbar-brand darken-on-hover" style="font-family: sentinel;" href="https://www.stanthonysf.org/">
+            <img src="{% static 'images/logo_60x163.png' %}"
+             class="img-fluid img-center"
+             style="width:320px; object-fit:cover;">
+          </a>
+          <ul class="nav navbar-nav mr-auto mt-2 mt-lg-0">
             <li class="nav-item">
-              <a class="nav-link text-white" href="/">Home</a>
+              <a class="nav-link menu-darken-on-hover" href="{% url 'home' %}">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="{% url 'about' %}">About</a>
+              <a class="nav-link menu-darken-on-hover" href="{% url 'home' %}#about">About</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="{% url 'index' %}"
-                >View All Resources</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link text-white" href="{% url 'category' %}"
-                >Find Resources By Category</a
+              <a class="nav-link menu-darken-on-hover" href="{% url 'home' %}#browse-resources"
+                >Browse Resources</a
               >
             </li>
             <li>
-              <a class="nav-link text-white" href="/contact" role="button"
+              <a class="nav-link menu-darken-on-hover" href="{% url 'contact' %}" role="button"
           >Contact Us</a>
             </li>
             {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link text-white" href="{% url 'resources_create' %}"
-                >Add Resource</a
+              <a class="nav-link menu-darken-on-hover" href="{% url 'resources_manage' %}"
+                >Manage Resources</a
               >
-            </li>
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'myresource' %}">View My Resources</a></li>
-            <li class="nav-item">
-              <a class="btn btn-info my-2" href="{% url 'logout' %}"
-                >Logout</a
-              >
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link text-white" href="{% url 'signup' %}"
-                >Sign Up</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="btn btn-info my-2" href="{% url 'login' %}">Login</a>
             </li>
             {% endif %}
           </ul>
+          {% if user.is_authenticated %}
+          <div class="row m-2 shadow-sm" style="display:inline-block;">
+             <a class="btn btn-default bold darken-on-hover"
+             href="{% url 'logout' %}"
+             role="button">Log Out</a>
+          </div>   
+          {% else %}
+          <div class="row m-2 shadow-sm" style="display:inline-block;">
+             <a class="btn btn-default bold darken-on-hover"
+             href="{% url 'login' %}"
+             role="button">Log In</a>
+          </div>
+          {% endif %}
         </div>
       </nav>
       <div class="main">
@@ -106,6 +97,7 @@
         </nav>
       </div>
     </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script
