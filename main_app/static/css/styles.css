@@ -1,7 +1,7 @@
 :root {
-  --main-text-color: #6E645C;
-  --resource-text-color: #00AECB;
-  --faint-text-color: #6EB2BD;
+  --main-text-color: #6e645c;
+  --resource-text-color: #00aecb;
+  --faint-text-color: #6eb2bd;
 }
 
 #map {
@@ -43,115 +43,243 @@ body {
 }
 
 @font-face {
-  font-family: 'avenir-black';
-  src: url('../fonts/avenir-black.otf') format("opentype");
+  font-family: "avenir-black";
+  src: url("../fonts/avenir-black.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'avenir';
-  src: url('../fonts/avenir.ttc') format("truetype");
+  font-family: "avenir";
+  src: url("../fonts/avenir.ttc") format("truetype");
 }
 
 * {
-font-family: 'avenir';
-color: #6E645C;
+  font-family: "avenir";
+  color: #6e645c;
 }
 
 .bold {
-font-family: 'avenir-black';
+  font-family: "avenir-black";
 }
 
-.home-stanthonys, .home-stanthonys:hover {
-color:#78291C;
+.home-stanthonys,
+.home-stanthonys:hover {
+  color: #78291c;
 }
 
 .menu-darken-on-hover:hover {
-background-color: #E9E9E9;
+  background-color: #e9e9e9;
 }
 
 .darken-on-hover:hover {
-opacity:0.6;
+  opacity: 0.6;
 }
 
-.btn-home-resources, .btn-home-resources:hover {
-background-color:#D77540;
-color:#F8CD7F;
+.btn-home-resources,
+.btn-home-resources:hover {
+  background-color: #d77540;
+  color: #f8cd7f;
 }
 
-.btn-home-get-involved, .btn-home-get-involved:hover {
-background-color:#E9E9E9;
-color:#6EB2BD;
+.btn-home-get-involved,
+.btn-home-get-involved:hover {
+  background-color: #e9e9e9;
+  color: #6eb2bd;
 }
 
-.btn-default, .btn-default:hover {
-background-color:#D77540;
-color:#E9E9E9;
+.btn-default,
+.btn-default:hover {
+  background-color: #d77540;
+  color: #e9e9e9;
 }
 
-.btn-delete, .btn-delete:hover {
-background-color:#C33D31;
-color:#E9E9E9;
+.btn-delete,
+.btn-delete:hover {
+  background-color: #c33d31;
+  color: #e9e9e9;
 }
 
-.btn-edit, .btn-edit:hover {
-background-color:#6E645C;
-color:#E9E9E9;
+.btn-edit,
+.btn-edit:hover {
+  background-color: #6e645c;
+  color: #e9e9e9;
 }
 
-.btn-resource-listing, .btn-resource-listing:hover {
-background-color:#D77540;
-color:#E9E9E9;
+.btn-resource-listing,
+.btn-resource-listing:hover {
+  background-color: #d77540;
+  color: #e9e9e9;
 }
 
 div.align-div-to-bottom {
-position: absolute;
-bottom: 0;
-right: 0;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .form-label {
-vertical-align: top;
-color:#00AECB !important;  
+  vertical-align: top;
+  color: #00aecb !important;
 }
 
-a[aria-expanded=true] .manage-plus {
- display: none;
+a[aria-expanded="true"] .manage-plus {
+  display: none;
 }
 
-a[aria-expanded=false] .manage-minus {
- display: none;
+a[aria-expanded="false"] .manage-minus {
+  display: none;
 }
 
 .container-fluid {
-padding-right: 0;
-padding-left: 0;
-margin-right: auto;
-margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .container {
-padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 h1 {
-text-align: center;
-color: #6E645C;
-width: 100%;
+  text-align: center;
+  color: #6e645c;
+  width: 100%;
 }
 
 form {
-color: #14a3b8;
-padding-left: 20px;
+  color: #14a3b8;
+  padding-left: 20px;
 }
 
 th {
-vertical-align: top;
-color:#00AECB;
+  vertical-align: top;
+  color: #00aecb;
 }
 
 .update {
-background-color: #14a3b8;
-color: black;
-padding-left: 20px;
-padding-right: 20px;
+  background-color: #14a3b8;
+  color: black;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+@font-face {
+  font-family: "avenir-black";
+  src: url("../fonts/avenir-black.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "avenir";
+  src: url("../fonts/avenir.ttc") format("truetype");
+}
+
+* {
+  font-family: "avenir";
+  color: #6e645c;
+}
+
+.bold {
+  font-family: "avenir-black";
+}
+
+.home-stanthonys,
+.home-stanthonys:hover {
+  color: #78291c;
+}
+
+.menu-darken-on-hover:hover {
+  background-color: #e9e9e9;
+}
+
+.darken-on-hover:hover {
+  opacity: 0.6;
+}
+
+.btn-home-resources,
+.btn-home-resources:hover {
+  background-color: #d77540;
+  color: #f8cd7f;
+}
+
+.btn-home-get-involved,
+.btn-home-get-involved:hover {
+  background-color: #e9e9e9;
+  color: #6eb2bd;
+}
+
+.btn-default,
+.btn-default:hover {
+  background-color: #d77540;
+  color: #e9e9e9;
+}
+
+.btn-delete,
+.btn-delete:hover {
+  background-color: #c33d31;
+  color: #e9e9e9;
+}
+
+.btn-edit,
+.btn-edit:hover {
+  background-color: #6e645c;
+  color: #e9e9e9;
+}
+
+.btn-resource-listing,
+.btn-resource-listing:hover {
+  background-color: #d77540;
+  color: #e9e9e9;
+}
+
+div.align-div-to-bottom {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.form-label {
+  vertical-align: top;
+  color: #00aecb !important;
+}
+
+a[aria-expanded="true"] .manage-plus {
+  display: none;
+}
+
+a[aria-expanded="false"] .manage-minus {
+  display: none;
+}
+
+.container-fluid {
+  padding-right: 0;
+  padding-left: 0;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.container {
+  padding-bottom: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #6e645c;
+  width: 100%;
+}
+
+form {
+  color: #14a3b8;
+  padding-left: 20px;
+}
+
+th {
+  vertical-align: top;
+  color: #00aecb;
+}
+
+.update {
+  background-color: #14a3b8;
+  color: black;
+  padding-left: 20px;
+  padding-right: 20px;
 }
