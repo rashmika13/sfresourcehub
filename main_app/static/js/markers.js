@@ -35,6 +35,14 @@ function initMap() {
     var category =
       category_index == -1 ? "Unknown Category" : category_names[category_index];
 
+    var seniors_and_youth = ''
+    if (resource.youth_only === 'True') {
+      seniors_and_youth = seniors_and_youth + `<div class='resource_street'><img src='${youth_only_icon}'>&nbsp;Youth Only</div>` 
+    }
+    if (resource.seniors_only === 'True') {
+      seniors_and_youth = seniors_and_youth + `<div class='resource_street'><img src='${seniors_only_icon}'>&nbsp;Seniors Only</div>`
+    }
+
     var commonContentString = `
         <div class='resource_name'>${resource.resource_name}</div>
         <div class='resource_notes'>offered by <div class="bold" style="display:inline;">${resource.org_name}</div></div>
@@ -46,6 +54,8 @@ function initMap() {
           <a href="#card${resource.id}" style="text-decoration:none;">
             ${commonContentString}
             <div class='resource_street'>${resource.address}</div>
+            <br>
+            ${seniors_and_youth}
             <br>
             <div class='resource_notes text-center' style="width:100%; color:#6EB2BD;">Click for listing details</div>
           </a>
@@ -64,6 +74,8 @@ function initMap() {
             ${resource.link}
           </a>
         </div>
+        <br>
+        ${seniors_and_youth}
         <br>
         <div class='resource_street' style=''>${resource.notes}</div>
         <br>

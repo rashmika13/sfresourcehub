@@ -41,12 +41,18 @@
 
       const default_icon = "{% static 'images/icons/default.gif' %}"
 
+      const youth_only_icon = "{% static 'images/icons/youth.gif' %}"
+      const seniors_only_icon = "{% static 'images/icons/seniors.gif' %}"
+
       resources_from_database = []
 
-      var {title, passlist_categories} = getTitleAndPasslistFromUrlParams();
+      var {title, passlist_categories, for_youth, for_seniors} = getTitleAndPasslistFromUrlParams();
 
       {% for resource in resources %}
-        if (passlist_categories.length < 1 || passlist_categories.includes("{{resource.category}}")) {
+        if ((!for_youth && !for_seniors && passlist_categories.length < 1) ||
+            (!for_youth && !for_seniors && passlist_categories.includes("{{resource.category}}")) ||
+            (for_youth && '{{resource.youth_only}}' === 'True') ||
+            (for_seniors && '{{resource.seniors_only}}' === 'True')) {
           opening_hours = "<ul>"
             {% for key, value in resource.opening_hours.opening_hours.items %}
              if ("{{value.enabled}}" == "True") {
@@ -59,6 +65,8 @@
             resource_name: "{{resource.resource_name}}",
             org_name: "{{resource.org_name}}",
             category: "{{resource.category}}",
+            youth_only: "{{resource.youth_only}}",
+            seniors_only: "{{resource.seniors_only}}",
             hrs: opening_hours,
             link: "{{resource.url}}",
             notes: "{{resource.notes}}",

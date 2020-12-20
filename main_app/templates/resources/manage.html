@@ -20,17 +20,15 @@
       opening_hours_map = {};
 
       {% for resource in resources %}
-        // if (passlist_categories.length < 1 || passlist_categories.includes("{{resource.category}}")) {
-          opening_hours = "<ul>"
-            {% for key, value in resource.opening_hours.opening_hours.items %}
-             if ("{{value.enabled}}" == "True") {
-               opening_hours += "<li>{{key}}: {{value.opening_time}} - {{value.closing_time}}</li>"
-             }
-            {% endfor %}
-          opening_hours += "\n</ul>"
+        opening_hours = "<ul>"
+          {% for key, value in resource.opening_hours.opening_hours.items %}
+          if ("{{value.enabled}}" == "True") {
+            opening_hours += "<li>{{key}}: {{value.opening_time}} - {{value.closing_time}}</li>"
+          }
+          {% endfor %}
+        opening_hours += "\n</ul>"
 
-          opening_hours_map[{{resource.id}}] = opening_hours;
-        // }
+        opening_hours_map[{{resource.id}}] = opening_hours;
       {% endfor %}
 
       function set_opening_hours() {
@@ -120,6 +118,15 @@
                       {{resource.url}}
                     </a>
                   </div>
+                  {% if resource.youth_only or resource.seniors_only %}
+                    <br>
+                  {% endif %}
+                  {% if resource.youth_only %}
+                    <div class='resource_street'><img src="{% static 'images/icons/youth.gif' %}">&nbsp;Youth Only</div>
+                  {% endif %}
+                  {% if resource.seniors_only %}
+                    <div class='resource_street'><img src="{% static 'images/icons/seniors.gif' %}">&nbsp;Seniors Only</div>
+                  {% endif %} 
                   <br>
                   <div class='row m-1 resource_street' style='height:auto;'>{{resource.notes}}</div>
                 </div>

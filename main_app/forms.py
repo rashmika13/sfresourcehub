@@ -116,6 +116,8 @@ class AddResourceForm(forms.ModelForm):
         fields = ('resource_name',
                   'org_name',
                   'category',
+                  'youth_only',
+                  'seniors_only',
                   'opening_hours',
                   'phone',
                   'address',
@@ -133,6 +135,8 @@ class AddResourceForm(forms.ModelForm):
             'resource_name': forms.TextInput(),
             'org_name': forms.TextInput(),
             'category': forms.Select(),
+            'youth_only': forms.CheckboxInput(),
+            'seniors_only': forms.CheckboxInput(),
             'opening_hours': WeeklyOpeningHoursMultiWidget(),
             'phone': USPhoneNumberMultiWidget(),
             'address': forms.TextInput(),
@@ -150,6 +154,10 @@ class AddResourceForm(forms.ModelForm):
     resource_name = forms.CharField(max_length=100, required=True, label='Resource')
     org_name = forms.CharField(max_length=100, required=True, label='Organization')
     category = forms.ChoiceField(choices=Resource.CATEGORIES)
+    youth_only = forms.BooleanField(widget=forms.CheckboxInput(),
+                                    required=False)
+    seniors_only = forms.BooleanField(widget=forms.CheckboxInput(),
+                                      required=False)
     opening_hours = forms.CharField(max_length=512, widget=WeeklyOpeningHoursMultiWidget(), required=False)
     phone = forms.CharField(widget=USPhoneNumberMultiWidget(), label='Phone number')
   

@@ -140,7 +140,8 @@ class Resource(models.Model):
     category = models.CharField(max_length=100,
                                 choices=CATEGORIES,
                                 default=UNKNOWN)
-
+    youth_only = models.BooleanField(default=False)
+    seniors_only = models.BooleanField(default=False)
     opening_hours = WeeklyOpeningHoursField()
     address = models.CharField(max_length=100, blank=True)
     street_number = models.CharField(max_length=100, blank=True)
